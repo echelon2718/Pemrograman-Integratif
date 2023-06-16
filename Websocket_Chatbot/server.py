@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import openai
 
-openai.api_key = "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"
+openai.api_key = "SECRET-API-KEY"
 
 def chatRes(text):
     response = openai.Completion.create(
