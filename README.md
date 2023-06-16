@@ -3,4 +3,4 @@ Berisi proyek mata kuliah PI. Berikut merupakan beberapa implementasi gRPC, Webs
 
 <li>gRPC: Berjalan menggunakan library grpcio pada python.</li>
 <li>Websocket: Berjalan menggunakan library asyncio dan websockets yang tersedia pada python.</li>
-<li>SSE: (Akan diupdate)</li>
+<li>SSE: Berjalan dengan menggunakan Flask yang akan ditampilkan lewat localhost</li>
