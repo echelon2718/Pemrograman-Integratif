@@ -5,7 +5,7 @@ import chat_pb2
 import chat_pb2_grpc
 import openai
 
-openai.api_key = "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"
+openai.api_key = "SECRET-API-KEY"
 
 
 def chatRes(text):
