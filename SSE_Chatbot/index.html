@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Web Service</title>
+    <style>
+    body {
+        background-color: #222;
+        color: #fff;
+        font-family: "Arial", sans-serif;
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 50px;
+        font-size: 30px;
+    }
+
+    .chat-container {
+        margin-top: 30px;
+        background-color: #333;
+        border-radius: 10px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 18px;
+        line-height: 1.5;
+        overflow-y: scroll;
+        max-height: 400px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        display: inline-block;
+        word-wrap: break-word;
+    }
+
+    .user-message {
+        align-self: flex-end;
+        background-color: #fff;
+        color: #000;
+        text-align: right;
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        background-color: #fff;
+        color: #000;
+        text-align: left;
+    }
+
+    #input {
+        margin-top: 20px;
+        padding: 10px;
+        font-size: 16px;
+        width: 300px;
+        border: none;
+        border-radius: 5px;
+        background-color: #444;
+        color: #fff;
+    }
+
+    #input:focus {
+        outline: none;
+        background-color: #555;
+    }
+
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+    <script>
+        const eventSource = new EventSource('/stream');
+        eventSource.addEventListener('message', function (event) {
+            const response = JSON.parse(event.data);
+            const message = response.message;
+            const sender = response.sender;
+            const chatContainer = document.getElementById('chat-container');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender + '-message');
+            messageElement.textContent = message;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+        
+        function sendMessage() {
+            const input = document.getElementById('input');
+            const message = input.value;
+            input.value = '';
+
+            fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'message': message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const chatContainer = document.getElementById('chat-container');
+                const userMessageElement = document.createElement('div');
+                userMessageElement.classList.add('message');
+                userMessageElement.classList.add('user-message');
+                userMessageElement.textContent = message;
+                chatContainer.appendChild(userMessageElement);
+                
+                const botMessageElement = document.createElement('div');
+                botMessageElement.classList.add('message');
+                botMessageElement.classList.add('bot-message');
+                botMessageElement.textContent = data.message;
+                chatContainer.appendChild(botMessageElement);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Komunikasi Dengan SSE Web Service</h1>
+    <div id="chat-container" class="chat-container"></div>
+    <input type="text" id="input" placeholder="Enter a message" />
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
